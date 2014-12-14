@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ['david.saenz.tagarro@gmail.com']
   spec.summary       = %q{Dead-simple way to make Capybara and Selenium play together }
   spec.description   = %q{}
-  spec.homepage      = ''
+  spec.homepage      = 'https://github.com/dsaenztagarro/capybara-selenium'
   spec.license       = 'MIT'
 
   spec.files         = `git ls-files -z`.split("\x0")
