@@ -1,7 +1,7 @@
 module CapybaraSelenium
   module AppServer
     class BaseConfiguration
-      attr_accessor :server_host, :server_port
+      attr_accessor :host, :port
     end
 
     class RackConfiguration < BaseConfiguration

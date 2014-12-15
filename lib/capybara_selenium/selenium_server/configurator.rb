@@ -1,6 +1,8 @@
 module CapybaraSelenium
   module SeleniumServer
     class BaseConfigurator < Server::Configurator
+      private
+
       def caps(key)
         capabilities[key]
       end

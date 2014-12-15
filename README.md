@@ -32,40 +32,53 @@ Supported applications:
 - [X] Modular sinatra apps (through config.ru)
 - [ ] Rails apps
 
+#### Option 1: Using a block in constructor call (Recommended)
+
+```ruby
+# features/support/continous_integration.rb
+CapybaraSelenium::Configurator.new do
+  rack_app_server.configure do |config|
+    config.host = ENV['CI_APP_SERVER_HOST'] || 'localhost'
+    config.port = ENV['CI_APP_SERVER_PORT'] || 8080
+    config.config_ru_path  = File.expand_path(
+      File.join(__FILE__, '../web_app/config.ru'))
+  end
+
+  remote_selenium_server.configure do |config|
+    config.server_url = ENV['CI_SELENIUM_SERVER_URL'] ||
+      'http://127.0.0.1:4444/wd/hub'
+    config.capabilities = { browser_name: browser_name }
+  end
+end
+```
+
+#### Option 2: Using instance methods
+
 ```ruby
 # features/support/continous_integration.rb
 module ContinousIntegration
-  def app_server(opts = {})
-    {
-      host: ENV['CI_APP_SERVER_HOST'] || 'localhost',
-      port: ENV['CI_APP_SERVER_PORT'] || 8080,
-      type: :rack,
-      config_ru_path: ENV['CI_APP_SERVER_CONFIG_RU'] || config_ru_path
-    }.merge(opts)
-  end
-
-  def selenium_server(opts = {})
-    {
-      type: :remote,
-      url: ENV['CI_SELENIUM_SERVER_URL'] || 'http://127.0.0.1:4444/wd/hub',
-      capabilities: {
-        browser_name: :firefox
-      }
-    }.merge(opts)
-  end
-
   def driver_for(browser_name)
-    CapybaraSelenium::GlobalConfigurator.new(
-      app_server: app_server,
-      selenium_server: selenium_server.merge(
-        capabilities: {
-          browser_name: browser_name
-        })
-    ).driver
+    @configurator = CapybaraSelenium::Configurator.new
+    configure_rack_app_server
+    configure_selenium_server(browser_name)
+    @configurator.apply
   end
 
-  def config_ru_path
-    File.expand_path(File.join(__FILE__, '../dummy_app/config.ru'))
+  def configure_rack_app_server
+    @configurator.rack_app_server.configure do |config|
+      config.host = ENV['CI_APP_SERVER_HOST'] || 'localhost'
+      config.port = ENV['CI_APP_SERVER_PORT'] || 8080
+      config.config_ru_path  = File.expand_path(
+        File.join(__FILE__, '../web_app/config.ru'))
+    end
+  end
+
+  def configure_selenium_server(browser_name)
+    @configurator.remote_selenium_server.configure do |config|
+      config.server_url = ENV['CI_SELENIUM_SERVER_URL'] ||
+        'http://127.0.0.1:4444/wd/hub'
+      config.capabilities = { browser_name: browser_name }
+    end
   end
 end
 

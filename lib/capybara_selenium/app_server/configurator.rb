@@ -2,20 +2,9 @@ module CapybaraSelenium
   module AppServer
     class BaseConfigurator < Server::Configurator
       def apply
-        Capybara.server_host = server_host
-        Capybara.server_port = server_port
-        Capybara.app_host = "http://#{server_host}:#{server_port}"
-      end
-
-      private
-
-      def create_configuration
-        "CapybaraSelenium::AppServer::#{app_server_type}Configuration"
-          .constantize.new
-      end
-
-      def app_server_type
-        /^(?<type>(.)*)Configurator/.match(self.class)[:type]
+        Capybara.server_host = host
+        Capybara.server_port = port
+        Capybara.app_host = "http://#{host}:#{port}"
       end
     end
 

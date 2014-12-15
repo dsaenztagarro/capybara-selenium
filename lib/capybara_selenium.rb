@@ -1,9 +1,9 @@
-require_relative 'version'
-require_relative 'server/configurator'
-require_relative 'app_server/configurator'
-require_relative 'app_server/configuration'
-require_relative 'selenium_server/configurator'
-require_relative 'selenium_server/configuration'
+require_relative 'capybara_selenium/version'
+require_relative 'capybara_selenium/server/configurator'
+require_relative 'capybara_selenium/app_server/configurator'
+require_relative 'capybara_selenium/app_server/configuration'
+require_relative 'capybara_selenium/selenium_server/configurator'
+require_relative 'capybara_selenium/selenium_server/configuration'
 
 require 'active_support/inflector'
 
@@ -14,27 +14,22 @@ module CapybaraSelenium
   class Configurator
     include AppServer
     include SeleniumServer
+    attr_reader :driver
 
     def initialize(&block)
-      check_options(opts)
-      @app_server = configurator_for :app_server, opts
-      @selenium_server = configurator_for :selenium_server, opts
+      define_singleton_method(:dispatch, block) if block_given?
     end
 
-    def driver
+    def apply
       @app_server.apply
-      @selenium_server.apply
-    end
-
-    def setup(&block)
-      block.call(@app_server)
+      @driver = @selenium_server.apply
     end
 
     def method_missing(method, *args, &block)
-      if method =~ /(.)*_app_server/
-        @app_server ||= configurator :app_server, $0
-      elsif method =~ /(.)*_selenium_server/
-        @selenium_server ||= configurator :selenium_server, $0
+      if method =~ /(.*)_app_server/
+        @app_server ||= configurator :app_server, $1
+      elsif method =~ /(.*)_selenium_server/
+        @selenium_server ||= configurator :selenium_server, $1
       else
         raise
       end
@@ -42,11 +37,16 @@ module CapybaraSelenium
 
     private
 
-    def configurator(server_type, configurator_type)
+    def configurator(server_type, configurator_type, &block)
       klass = self.class
       server_module = klass.classify(server_type)
       configurator_klass = klass.classify(configurator_type)
       "CapybaraSelenium::#{server_module}::#{configurator_klass}Configurator"
+        .constantize.new(configuration(server_module, configurator_klass))
+    end
+
+    def configuration(server_module, klass)
+      "CapybaraSelenium::#{server_module}::#{klass}Configuration"
         .constantize.new
     end
 
