@@ -4,7 +4,7 @@ module CapybaraSelenium
       def apply
         Capybara.server_host = host
         Capybara.server_port = port
-        Capybara.app_host = "http://#{host}:#{port}"
+        Capybara.app_host = url
       end
     end
 
