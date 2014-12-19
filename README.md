@@ -49,7 +49,7 @@ CapybaraSelenium::Configurator.new do
       'http://127.0.0.1:4444/wd/hub'
     config.capabilities = { browser_name: browser_name }
   end
-end
+end.dispatch
 ```
 
 #### Option 2: Using instance methods
