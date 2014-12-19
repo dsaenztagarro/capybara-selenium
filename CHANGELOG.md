@@ -1,3 +1,8 @@
+## 0.0.4
+
+* Complete refactoring for `CapybaraSelenium::Configurator`
+* Documentation updated
+
 ## 0.0.3
 
 * Fixed constant name `CapybaraSelenium::Configurator` instead of 

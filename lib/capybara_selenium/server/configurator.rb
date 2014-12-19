@@ -1,29 +1,34 @@
 module CapybaraSelenium
   module Server
     class Configurator
-      def initialize(configuration)
-        @configuration = configuration
+      attr_accessor :config
+
+      def initialize(config)
+        @config = config
       end
 
       def configure(&block)
-        @configuration = create_configuration
-        block.call @configuration
+        @config = create_config
+        block.call @config
       end
 
-      def method_missing(method)
-        if @configuration.respond_to? method
-          return @configuration.send(method)
+      def method_missing(method, *args, &_)
+        if @config.respond_to? method
+          if method =~ /(.*)=/
+            return @config.send method, args.first
+          else
+            return @config.send method
+          end
         else
-          raise
+          fail
         end
       end
 
       private
 
-      def create_configuration
+      def create_config
         *modules, klass = self.class.to_s.split('::')
-        "#{modules.join('::')}::#{type_of(klass)}Configuration"
-          .constantize.new
+        "#{modules.join('::')}::#{type_of klass}Configuration".constantize.new
       end
 
       def type_of(klass)
