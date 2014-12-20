@@ -25,11 +25,11 @@ module CapybaraSelenium
         "#{caps(:browser_name)}_#{caps(:version)}_#{caps(:platform)}"
       end
 
-      # @return [] The desired capabilities for the browser
+      # @return [Hash] The desired capabilities for the browser
       def desired_capabilities
         return @desired_capabilities if @desired_capabilities
         @desired_capabilities = Selenium::WebDriver::Remote::Capabilities
-                                .send(caps(:browser_name))
+                                .send(caps(:browser_name), capabilities)
       end
     end
   end

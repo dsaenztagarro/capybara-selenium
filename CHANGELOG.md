@@ -1,3 +1,7 @@
+## 0.0.5
+
+* Fixed capabilities for selenium remote server
+
 ## 0.0.4
 
 * Complete refactoring for `CapybaraSelenium::Configurator`
