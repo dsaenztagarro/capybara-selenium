@@ -1,3 +1,6 @@
+## 0.0.6
+
+* Syntax improvements for `CapybaraSelenium::SeleniumServer::RemoteConfigurator`
 ## 0.0.5
 
 * Fixed capabilities for selenium remote server

@@ -27,9 +27,8 @@ module CapybaraSelenium
 
       # @return [Hash] The desired capabilities for the browser
       def desired_capabilities
-        return @desired_capabilities if @desired_capabilities
-        @desired_capabilities = Selenium::WebDriver::Remote::Capabilities
-                                .send(caps(:browser_name), capabilities)
+        @desired_capabilities ||= Selenium::WebDriver::Remote::Capabilities
+                                  .send(caps(:browser_name), capabilities)
       end
     end
   end
