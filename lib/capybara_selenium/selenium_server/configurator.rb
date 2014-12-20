@@ -1,11 +1,6 @@
 module CapybaraSelenium
   module SeleniumServer
     class BaseConfigurator < Server::Configurator
-      private
-
-      def caps(key)
-        capabilities[key]
-      end
     end
 
     class RemoteConfigurator < BaseConfigurator
@@ -22,13 +17,17 @@ module CapybaraSelenium
       end
 
       def driver_name
-        "#{caps(:browser_name)}_#{caps(:version)}_#{caps(:platform)}"
+        browser_name = capabilities[:browser_name]
+        version = capabilities[:version]
+        platform = capabilities[:platform]
+        "#{browser_name}_#{version}_#{platform}"
       end
 
       # @return [Hash] The desired capabilities for the browser
       def desired_capabilities
-        @desired_capabilities ||= Selenium::WebDriver::Remote::Capabilities
-                                  .send(caps(:browser_name), capabilities)
+        caps = Selenium::WebDriver::Remote::Capabilities.new
+        capabilities.keys.each { |key| caps[key] = capabilities[key] }
+        caps
       end
     end
   end

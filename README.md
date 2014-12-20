@@ -42,15 +42,15 @@ APP_SERVER_PORT = ENV['CI_APP_SERVER_PORT'] || 8080
 SELENIUM_SERVER_URL = ENV['CI_SELENIUM_SERVER_URL'] || 
                       'http://127.0.0.1:4444/wd/hub'
 
-CapybaraSelenium::Configurator.new do |app_server, selenium_server|
-  app_server.host = APP_SERVER_HOST
-  app_server.port = APP_SERVER_PORT
-  app_server.config_ru_path  = File.expand_path(
+CapybaraSelenium.configure(:rack, :remote) do |config|
+  config.app_server.host = APP_SERVER_HOST
+  config.app_server.port = APP_SERVER_PORT
+  config.app_server.config_ru_path = File.expand_path(
       File.join(__FILE__, '../web_app/config.ru'))
 
-  selenium_server.server_url = SELENIUM_SERVER_URL
-  selenium_server.capabilities = { browser_name: browser_name }
-end.configure
+  config.selenium_server.url = SELENIUM_SERVER_URL
+  config.selenium_server.capabilities = { browser_name: browser_name }
+end
 ```
 
 ## Contributing
